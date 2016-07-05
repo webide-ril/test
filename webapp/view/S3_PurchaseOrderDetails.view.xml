@@ -1,0 +1,112 @@
+<mvc:View id="detailsView" controllerName="nw.epm.refapps.ext.po.apv.controller.S3_PurchaseOrderDetails" xmlns="sap.m" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc" 
+		xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:core="sap.ui.core">
+	<Page id="detailsPage" title="{i18n>xtit.detailTitle}" showNavButton="{device>/system/phone}" navButtonPress="onNavBack">
+		<content>
+			<!--Header information supplier name, total value with currency code, change date and requester of the selected purchase order -->
+			<ObjectHeader id="objectHeader"
+				title="{SupplierName}" responsive="true"
+				number="{path: 'GrossAmount', formatter: '.formatter.amountWithOutCurrency'}" numberUnit="{CurrencyCode}"
+				intro="{path:'OrderedByName', formatter: '.formatter.orderedBy'}">
+				<statuses>
+					<ObjectStatus id="changedAtStatus" text="{path: 'ChangedAt', formatter: '.formatter.daysAgo'}" />
+				</statuses>
+			</ObjectHeader>
+
+			<!--Allow adding fields after the object header -->
+			<core:ExtensionPoint name="extensionAfterObjectHeader" />
+
+			<!--Further information with purchase order number, delivery date and delivery address-->
+			<form:SimpleForm id="poHeaderForm"
+				title="{i18n>xtit.formTitle}" layout="ResponsiveGridLayout"
+				minWidth="1024" maxContainerCols="2" class="sapUiForceWidthAuto sapUiResponsiveMargin"
+				labelSpanL="3" labelSpanM="3" emptySpanL="5" emptySpanM="5" columnsL="1" columnsM="1">
+				<Label id="poIdFormLabel" text="{/#PurchaseOrder/POId/@sap:label}" />
+				<Text id="poIdForm" text="{POId}" />
+				<Label id="deliveryDateFormLabel" text="{/#PurchaseOrder/DeliveryDateEarliest/@sap:label}" />
+				<Text id="deliveryDateForm" text="{parts:[{path: 'DeliveryDateEarliest'}, {path: 'LaterDelivDateExist'}], formatter: '.formatter.deliveryDateAndLater' }" />
+				<Label id="addressFormLabel" text="{/#PurchaseOrder/DeliveryAddress/@sap:label}" />
+				<Text id="addressForm" text="{DeliveryAddress}" />
+			</form:SimpleForm>
+
+			<!--Allow adding fields after the form -->
+			<core:ExtensionPoint name="extensionAfterForm" />
+
+			<!--Item list-->
+			<Table id="poItemsTable"
+				headerText="{path:'viewProperties>/itemListCount', formatter: '.formatter.itemListTitle' }"
+				updateFinished="onUpdateFinished" class="sapUiResponsiveMargin" width="auto"
+				items="{path: 'PurchaseOrderItems',
+						parameters: {select: 'POId,POItemPos,Product,Price,PriceCurrency,GrossAmount,GrossAmountCurrency,Quantity,DeliveryDate'}}">
+				<columns>
+					<!--Product name-->
+					<Column id="nameColumn" width="30%">
+						<header>
+							<Label id="nameColumnLabel" text="{/#PurchaseOrderItem/Product/@sap:label}" visible="{= !${device>/system/phone} }" />
+						</header>
+					</Column>
+					<!--Delivery Date-->
+					<Column id="deliveryDateColumn" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline" width="15%">
+						<header>
+							<Label id="deliveryDateColumnLabel" text="{/#PurchaseOrderItem/DeliveryDate/@sap:label}" />
+						</header>
+					</Column>
+					<!--Ordered Quantity-->
+					<Column id="quantityColumn" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline" hAlign="Right" width="15%">
+						<header>
+							<Label id="quantityColumnLabel" text="{/#PurchaseOrderItem/Quantity/@sap:label}" />
+						</header>
+					</Column>
+					<!--Product price-->
+					<Column id="priceColumn" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline" hAlign="Right" width="20%">
+						<header>
+							<Label id="priceColumnLabel" text="{/#PurchaseOrderItem/Price/@sap:label}" />
+						</header>
+					</Column>
+					<!--Gross amount of the item-->
+					<Column id="grossAmountColumn" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline" hAlign="Right" width="20%">
+						<header>
+							<Label id="grossAmountColumnLabel" text="{/#PurchaseOrderItem/GrossAmount/@sap:label}" />
+						</header>
+					</Column>
+				</columns>
+				<ColumnListItem id="detailsListItem">
+					<cells>
+						<!--Product name-->
+						<Text id="nameCell" text="{Product}" class="sapMTableContentMargin" />
+						<!--Delivery Date-->
+						<Text id="deliveryDateCell" text="{path:'DeliveryDate', formatter: '.formatter.deliveryDate' }" class="sapMTableContentMargin" />
+						<!--Ordered Quantity-->
+						<Text id="quantityCell" text="{path: 'Quantity', type: 'sap.ui.model.type.Integer'}" class="sapMTableContentMargin" />
+						<!--Product price-->
+						<ObjectNumber id="priceCell" number="{path: 'Price', formatter: '.formatter.amountWithOutCurrency'}" unit="{PriceCurrency}" 
+							emphasized="false" class="sapMTableContentMargin" />
+						<!--Gross amount of the item-->
+						<ObjectNumber id="grossAmountCell" number="{path: 'GrossAmount', formatter: '.formatter.amountWithOutCurrency'}" unit="{GrossAmountCurrency}" class="sapMTableContentMargin" />
+					</cells>
+				</ColumnListItem>
+			</Table>
+		</content>
+		
+		<!--Footer bar with "Approve" and "Reject" button and a button for opening an action sheet containing the standard "AddBookmark" button-->
+		<footer>
+			<OverflowToolbar id="footerToolbar">
+				<ToolbarSpacer id="footerToolbarSpacer"/>
+				<Button id="approveButton" type="Accept" text="{i18n>xbut.approve}" press="onApprovalButtonPressed" />
+				<Button id="rejectButton" type="Reject" text="{i18n>xbut.reject}" press="onApprovalButtonPressed" />
+				<Button id="shareButton" icon="sap-icon://action" press="onShareButtonPressed">
+					<dependents>
+						<ActionSheet id="shareSheet" showCancelButton="true" placement="Top">
+							<buttons>
+								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>xbut.email}" press="onShareEmailPressed" />
+								<footerbar:AddBookmarkButton id ="shareTile" appData="{
+									path: 'viewProperties>/saveAsTileTitle',
+									formatter: '.formatter.appDataForTile'
+								}"/>
+							</buttons>
+						</ActionSheet>
+					</dependents>
+				</Button>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

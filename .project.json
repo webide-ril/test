@@ -1,0 +1,34 @@
+{
+  "mockpreview": {
+    "mockUri": "/sap/opu/odata/sap/EPM_REF_APPS_PO_APV_SRV/",
+    "loadCustomRequests": true,
+    "loadJSONFiles": true,
+    "metadataFilePath": "../localService/metadata.xml",
+    "mockRequestsFilePath": "../localService/MockRequests.js"
+  },
+  "basevalidator": {
+    "validators": [
+      {
+        "validatorID": "fioriJsValidator",
+        "configuration": {
+          "rules": {},
+          "additionalRuleMetadata": {}
+        }
+      },
+      {
+        "validatorID": "fioriXmlAnalysis"
+      }
+    ],
+    "services": {
+      "js": "fioriJsValidator",
+      "xml": "fioriXmlAnalysis"
+    }
+  },
+  "generation": [
+    {
+      "templateId": "fiorireferenceapps.approvePurchaseOrder",
+      "templateVersion": "2.0.14",
+      "dateTimeStamp": "Tue, 05 Jul 2016 09:40:06 GMT"
+    }
+  ]
+}

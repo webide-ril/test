@@ -1,0 +1,57 @@
+<mvc:View id="summaryView" controllerName="nw.epm.refapps.ext.po.apv.controller.S3_PurchaseOrderSummary" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">
+	<Page id="summaryPage" 
+		showNavButton="{device>/system/phone}" navButtonPress="onNavBack"
+		title="{path: 'appProperties>/selectedPurchaseOrders', formatter: '.formatter.summaryTitle'}">
+		<content>
+			<ObjectHeader id="objectHeader"
+				responsive="true" title="{i18n>xtit.summaryHeaderTitle}"
+				number="{path: 'appProperties>/selectedPurchaseOrders', formatter: '.formatter.totalSum'}"
+				numberUnit="{path: 'appProperties>/selectedPurchaseOrders', formatter: '.formatter.currencyFromList'}" />
+
+            <!--Allow adding fields before the summary table with the selected purchase orders -->
+			<core:ExtensionPoint name="extensionBeforeSummaryTable"/>
+
+			<Table id="summaryTable" items="{appProperties>/selectedPurchaseOrders}" updateFinished="onTableUpdateFinished" class="sapUiResponsiveMargin" width="auto" noDataText="{i18n>ymsg.noDataTextSummary}">
+				<columns>
+					<!-- Supplier Name -->
+					<Column id="supplierNameColumn">
+						<header>
+							<Label id="supplierNameColumnLabel" text="{/#PurchaseOrder/SupplierName/@sap:label}"/>
+						</header>
+					</Column>
+					<!-- Purchase Order ID -->
+					<!-- Setting minScreenWidth to Small let's the column go to pop-in for portrait but not for landscape mode.-->
+					<Column id="poIdColumn" demandPopin="true" popinDisplay="Inline" minScreenWidth="Small">
+						<header>
+							<Label id="poIdColumnLabel" text="{/#PurchaseOrder/POId/@sap:label}"/>
+						</header>
+					</Column>
+					<!-- Gross Amount -->
+					<Column id="grossAmountColumn" hAlign="Right">
+						<header>
+							<Label id="grossAmountColumnLabel" text="{/#PurchaseOrder/GrossAmount/@sap:label}"/>
+						</header>
+					</Column>
+				</columns>
+				<ColumnListItem id="summaryListItem">
+					<cells>
+						<!-- Supplier Name -->
+						<ObjectIdentifier id="supplierNameCell" title="{appProperties>SupplierName}" text="{path: 'appProperties>ItemCount', formatter: '.formatter.items'}" class="sapMTableContentMargin"/>
+						<!-- Purchase Order ID -->
+						<Text id="poIdCell" text="{appProperties>POId}" class="sapMTableContentMargin"/>
+						<!-- Gross Amount -->
+						<ObjectNumber id="grossAmountCell" number="{path:'appProperties>GrossAmount', formatter: '.formatter.amountWithOutCurrency'}" unit="{appProperties>CurrencyCode}" class="sapMTableContentMargin"/>
+					</cells>
+				</ColumnListItem>
+			</Table>
+		</content>
+
+		<footer>
+			<OverflowToolbar id="footerToolbar">
+				<ToolbarSpacer id="footerToolbarSpacer"/>
+				<Button id="approveAllButton" enabled="{= ${appProperties>/selectedPurchaseOrders}.length > 0}" type="Accept" text="{i18n>xbut.approveAll}" press="onApprovalButtonPressed" />
+				<Button id="rejectAllButton" enabled="{= ${appProperties>/selectedPurchaseOrders}.length > 0}" type="Reject" text="{i18n>xbut.rejectAll}" press="onApprovalButtonPressed" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

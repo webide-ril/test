@@ -1,0 +1,24 @@
+{
+  "run": [
+    {
+      "filePath": "/webapp/test.html",
+      "previewMode": 1,
+      "dataMode": 1,
+      "workspace": "withoutWorkspace",
+      "ui5ActiveVersion": null,
+      "ui5VerSource": null,
+      "isDefaultVersion": 0,
+      "urlParameters": [],
+      "urlParametersNotNeeded": false,
+      "hashParameter": "",
+      "backendSystem": [],
+      "_metadata": {
+        "runnerId": "webapprunner",
+        "id": 7519106,
+        "displayName": "Run Approve Purchase Order",
+        "lastRunTimeStamp": 0,
+        "hasIssues": true
+      }
+    }
+  ]
+}
